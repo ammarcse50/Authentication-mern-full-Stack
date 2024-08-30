@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const User = require("./userModel");
-
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
@@ -22,17 +22,36 @@ router.post("/signup", async (req, res) => {
   res.json({ message: "record registered!" });
 });
 
-// router.post("/login", async (req, res) => {
+router.post("/login", async (req, res) => {
+  const {email,password} = req.body;
 
-//   const user = userModel.findOne({email})
+  // find user is sigup or not
+  const user =await User.findOne({email})
+ 
+  // if not available show message
+  if(!user)
+  {
 
-//   if(user)
-//   {
+    return res.json({message: "User is not registered!!"})
+  }
+  
+  // check is pass valid or not
+  const validPassword = await bcrypt.compare(password,user.password)
+  
+  // show message if not matched
 
-//   if()
-
-//   }
-
-// });
+  if(!validPassword)
+  {
+    return res.json({message:"Password not matched"})
+  }
+  const token = jwt.sign({email},"mysecrettoken",{expiresIn:"3d"})
+  res.cookie('token',token,{
+    maxAge:359999,
+    httpOnly: true,
+    sameSite: "none",
+    secure: false
+  })
+  return res.json({message: "login successfully"})
+});
 
 module.exports = router;
