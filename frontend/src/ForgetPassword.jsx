@@ -1,36 +1,31 @@
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
-const Login = () => {
+const ForgetPassword = () => {
   const navigate = useNavigate();
-  axios.defaults.withCredentials=true
   const handleSubmit = (e) => {
-    console.log("clicked");
     e.preventDefault();
 
     const form = e.target;
+
     const email = form.email.value;
-    const password = form.password.value;
-  const user = {email,password}
-  console.log(user);
 
     axios
       .post(
-        `http://localhost:3000/api/user/login`,
-        { email, password }
+        `http://localhost:3000/api/user/forgetPassword`,
+        { email },
+        { withCredential: true }
       )
       .then((res) => {
-        console.log(res);
-        if (res.request.status===200) {
+        if (res.data.status) {
           console.log("successfully login");
-          navigate("/");
+          navigate("/login");
         }
       });
   };
-
   return (
     <div className="mt-[20%]">
-      <h2 className="text-5xl text-sky-600 text-center">Login</h2>
+      <h2 className="text-5xl text-sky-600 text-center">FORGET PASSWORD</h2>
       <form
         onSubmit={handleSubmit}
         className="max-w-md mx-auto p-4 bg-white shadow-md rounded-md"
@@ -38,30 +33,21 @@ const Login = () => {
         <input
           type="email"
           name="email"
-          placeholder="email"
+          placeholder="Email"
           className="mt-1 mb-4 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           id=""
         />
-        <input
-          type="password"
-          name="password"
-          placeholder="password"
-          className="mb-4 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          id=""
-        />
+
         <button
           type="submit"
           className="w-full bg-indigo-600 text-white p-2 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           Login
         </button>
-        <p>
-          <Link className="text-red-500 font-bold " to="/forgetPassword">Forget Password?</Link>
-        </p>
-        <p>
+        <p className="text-center">
           New ?{" "}
-          <Link className="text-red-600" to="/signup">
-            Register
+          <Link className="text-red-500" to="/login">
+            login
           </Link>
         </p>
       </form>
@@ -69,4 +55,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgetPassword;
